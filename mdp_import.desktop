@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Service
+ServiceTypes=Krita/PythonPlugin
+X-KDE-Library=mdp_import
+X-Python-2-Compatible=false
+Name=MDIPACK Import
+Comment=Import MDIPACK files in Krita
