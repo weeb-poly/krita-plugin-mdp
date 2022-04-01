@@ -32,7 +32,11 @@ If you encounter an issue, feel free to reach out with the following:
 mdiapp+ is developed by nattou.org and published by PGN Inc.
 FireAlpaca, and openCanvas are developed and published by PGN Inc.
 
-I belive this plugin is compliant under FireAlpaca's Terms of Service as of the time this is being published.
+This package includes a zipped up copy of [`py_snappy`](https://github.com/ethereum/py-snappy) for decompression only. This module is bound by it's own [LICENSE](https://github.com/ethereum/py-snappy/blob/master/LICENSE).
+
+This package includes a Pure Python implementation of FastLZ (`py_fastlz`). This module was designed for usage in this project and comes with no guarantees if used outside of this project. This module will be published as standalone package soon.
+
+I believe this plugin is compliant under FireAlpaca's Terms of Service as of the time this is being published.
 
 I would like to thank Um6ra1 for his notes on the file format and Bowserinator for translating said notes from Japanese to English.
 

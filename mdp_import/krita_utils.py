@@ -1,3 +1,5 @@
+from typing import Optional
+
 from krita import Node as KritaNode
 
 from PyQt5.QtGui import QImage
@@ -31,3 +33,11 @@ def setQImageToKritaNode(node: KritaNode, img: QImage, x: int, y: int) -> None:
 
     # This is auto-converted to a QByteArray somewhere down the line
     node.setPixelData(imgBytes, x, y, w, h)
+
+def pyz_path_insert(pyz_file: str, path: Optional[str] = None) -> None:
+    import os
+    import sys
+
+    if path is None:
+        path = os.path.dirname(os.path.abspath(__file__))
+    sys.path.insert(0, os.path.join(path, pyz_file))

@@ -3,7 +3,17 @@ import struct
 import zlib
 from io import BufferedReader
 
+from .krita_utils import pyz_path_insert
+
+pyz_path_insert('py_snappy.pyz')
+pyz_path_insert('py_fastlz.pyz')
+
+import py_snappy as snappy
+import py_fastlz as fastlz
+
+
 MdpTileHeader = struct.Struct("<IIII")
+
 
 class MdpTile:
     col: str
@@ -51,15 +61,15 @@ class MdpTile:
             except Exception:
                 raise Exception("Could not decompress tile: zlib error")
         elif self.ctype == 1: # snappy
-            # The easiest way to do this without breaking Krita is to find
-            # a Pure Python implementation of snappy
-            # https://github.com/ethereum/py-snappy
-            raise Exception("Could not decompress tile: snappy not supported")
+            try:
+                self.data = snappy.decompress(cdata)
+            except Exception:
+                raise Exception("Could not decompress tile: py_snappy error")
         elif self.ctype == 2: # FastLZ
-            # The easiest way to do this without breaking Krita is to find
-            # a Pure Python implementation of FastLZ
-            # 
-            raise Exception("Could not decompress tile: FastLZ not supported")
+            try:
+                self.data = fastlz.decompress(cdata)
+            except Exception:
+                raise Exception("Could not decompress tile: py_fastlz error")
         else:
             # Unknown Compression Type
             assert False, f"Unknown Tile Compression Type '{self.ctype}'"
