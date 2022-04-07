@@ -1,15 +1,6 @@
-from typing import Optional
+from typing import BinaryIO, Optional
 import struct
 import zlib
-from io import BufferedReader
-
-from .krita_utils import pyz_path_insert
-
-pyz_path_insert('py_snappy.pyz')
-pyz_path_insert('py_fastlz.pyz')
-
-import py_snappy as snappy
-import py_fastlz as fastlz
 
 
 MdpTileHeader = struct.Struct("<IIII")
@@ -25,13 +16,13 @@ class MdpTile:
         return
 
     @classmethod
-    def read(cls, device: BufferedReader):
+    def read(cls, device: BinaryIO):
         this = cls()
         this._read(device)
         this._decompress()
         return this
 
-    def _read(self, device: BufferedReader) -> None:
+    def _read(self, device: BinaryIO) -> None:
         headerBytes = device.read(MdpTileHeader.size)
         if len(headerBytes) != MdpTileHeader.size:
             raise BufferError("Could not read tile header: not enough bytes")
@@ -58,18 +49,20 @@ class MdpTile:
         if self.ctype == 0: # zlib
             try:
                 self.data = zlib.decompress(cdata)
-            except Exception:
-                raise Exception("Could not decompress tile: zlib error")
+            except Exception as e:
+                raise Exception("Could not decompress tile: zlib error") from e
         elif self.ctype == 1: # snappy
-            try:
-                self.data = snappy.decompress(cdata)
-            except Exception:
-                raise Exception("Could not decompress tile: py_snappy error")
+            # try:
+            #     self.data = snappy.decompress(cdata)
+            # except Exception as e:
+            #     raise Exception("Could not decompress tile: py_snappy error") from e
+            raise Exception("Could not decompress tile: snappy not supported")
         elif self.ctype == 2: # FastLZ
-            try:
-                self.data = fastlz.decompress(cdata)
-            except Exception:
-                raise Exception("Could not decompress tile: py_fastlz error")
+            # try:
+            #     self.data = fastlz.decompress(cdata)
+            # except Exception as e:
+            #     raise Exception("Could not decompress tile: py_fastlz error") from e
+            raise Exception("Could not decompress tile: FastLZ not supported")
         else:
             # Unknown Compression Type
             assert False, f"Unknown Tile Compression Type '{self.ctype}'"

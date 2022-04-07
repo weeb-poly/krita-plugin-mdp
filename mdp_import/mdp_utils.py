@@ -14,7 +14,14 @@ def QColorFromArgbStr(c: str) -> QColor:
     return QColor(r, g, b, a)
 
 
-def decodeLayerImage(tiles: List[MdpTile], layerWidth: int, layerHeight: int, layerType: str, tileDim: int, layerColor: Optional[str] = None) -> QImage:
+def decodeLayerImage(
+    tiles: List[MdpTile],
+    layerWidth: int,
+    layerHeight: int,
+    layerType: str,
+    tileDim: int,
+    layerColor: Optional[str] = None
+) -> QImage:
     if layerType in ('8bpp', '1bpp',):
         assert layerColor is not None
 
@@ -35,7 +42,13 @@ def decodeLayerImage(tiles: List[MdpTile], layerWidth: int, layerHeight: int, la
     return layer_img
 
 
-def fillNodeWithTiles(node: KritaNode, tiles: List[MdpTile], layerType: str, tileDim: int, layerColor: Optional[str] = None) -> None:
+def fillNodeWithTiles(
+    node: KritaNode,
+    tiles: List[MdpTile],
+    layerType: str,
+    tileDim: int,
+    layerColor: Optional[str] = None
+) -> None:
     for tile in tiles:
         tile_img = decodeTileImage(tile, layerType, tileDim, layerColor)
         if tile_img is not None:
@@ -43,7 +56,12 @@ def fillNodeWithTiles(node: KritaNode, tiles: List[MdpTile], layerType: str, til
 
 
 
-def decodeTileImage(tile: MdpTile, layerType: str, tileDim: int, layerColor: Optional[QColor] = None) -> QImage:
+def decodeTileImage(
+    tile: MdpTile,
+    layerType: str,
+    tileDim: int,
+    layerColor: Optional[QColor] = None
+) -> QImage:
     tile_img = None
 
     if layerType == '32bpp':
@@ -65,5 +83,3 @@ def decodeTileImage(tile: MdpTile, layerType: str, tileDim: int, layerColor: Opt
             tile_img.setAlphaChannel(mask_img) # This should convert the mask to 8-bit grayscale
 
     return tile_img
-
-

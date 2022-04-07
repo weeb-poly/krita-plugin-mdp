@@ -35,8 +35,7 @@ def setQImageToKritaNode(node: KritaNode, img: QImage, x: int, y: int) -> None:
     node.setPixelData(imgBytes, x, y, w, h)
 
 def pyz_path_insert(pyz_file: str, path: Optional[str] = None) -> None:
-    import os
-    import sys
+    import os, sys
 
     if path is None:
         path = os.path.dirname(os.path.abspath(__file__))

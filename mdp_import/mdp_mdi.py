@@ -1,5 +1,4 @@
-from typing import List, Optional
-from io import BufferedReader
+from typing import BinaryIO, List, Optional
 from distutils.util import strtobool
 import xml.etree.ElementTree as ET
 
@@ -11,7 +10,7 @@ class MdpMdi:
     el: ET.Element
 
     @classmethod
-    def read(cls, device: BufferedReader, mdiSize: int):
+    def read(cls, device: BinaryIO, mdiSize: int):
         this = cls()
         mdiBytes = device.read(mdiSize)
         if len(mdiBytes) != mdiSize:
@@ -67,5 +66,5 @@ class MdpMdi:
         for layerEl in self.el.iterfind('./Layers/Layer'):
             l = MdpLayer(layerEl)
             layers.append(l)
-        
+
         return layers

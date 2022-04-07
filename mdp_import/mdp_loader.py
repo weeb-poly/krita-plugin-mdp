@@ -1,6 +1,5 @@
 import logging
-from typing import Dict
-from io import BufferedReader
+from typing import BinaryIO, Dict
 
 from krita import Krita, Document
 
@@ -19,12 +18,12 @@ class MdpLoader:
         self.mdp_mdi = None
         self.mdp_mdibin = None
 
-    def buildDoc(self, io: BufferedReader, krita: Krita) -> Document:
+    def buildDoc(self, io: BinaryIO, krita: Krita) -> Document:
         self._read(io)
         self._decode(krita)
         return self.m_doc
 
-    def _read(self, io: BufferedReader) -> None:
+    def _read(self, io: BinaryIO) -> None:
         logging.debug('pos: %i', io.tell())
 
         try:

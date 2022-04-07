@@ -1,6 +1,5 @@
-
 import struct
-from io import BufferedReader
+from typing import BinaryIO
 
 MDIPACK_SIG = b"mdipack"
 MDIPACK_VER = 0
@@ -17,12 +16,12 @@ class MdpHeader:
         return
 
     @classmethod
-    def read(cls, device: BufferedReader):
+    def read(cls, device: BinaryIO):
         this = cls()
         this._read(device)
         return this
 
-    def _read(self, device: BufferedReader) -> None:
+    def _read(self, device: BinaryIO) -> None:
         headerBytes = device.read(TMDIPack.size)
         if len(headerBytes) != TMDIPack.size:
             raise BufferError("Could not read header: not enough bytes")

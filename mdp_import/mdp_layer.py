@@ -1,6 +1,6 @@
+import io
 import struct
-from typing import List, Optional
-from io import BufferedReader, BytesIO
+from typing import BinaryIO, List, Optional
 from xml.etree.ElementTree import Element
 from distutils.util import strtobool
 
@@ -58,11 +58,10 @@ class MdpLayer:
         assert binType == "2", f"Unsupported Layer binType: {binType}"
 
     def decodeArchive(self, archive: MdpArchive) -> None:
-        with BytesIO(archive.archiveData) as _archiveIo:
-            with BufferedReader(_archiveIo) as archiveIo:
-                self._readBuffer(archiveIo)
+        with io.BytesIO(archive.archiveData) as archiveIo:
+            self._readBuffer(archiveIo)
 
-    def _readBuffer(self, device: BufferedReader) -> None:
+    def _readBuffer(self, device: BinaryIO) -> None:
         tileNum = struct.unpack('<I', device.read(4))[0]
 
         # If tileNum is zero, no other data is stored

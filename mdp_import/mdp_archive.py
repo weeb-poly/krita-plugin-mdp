@@ -1,6 +1,6 @@
 import struct
+from typing import BinaryIO
 import zlib
-from io import BufferedReader
 
 MDIPAC_ARC_SIG = b"PAC "
 
@@ -23,14 +23,14 @@ class MdpArchive:
         return
 
     @classmethod
-    def read(cls, device: BufferedReader):
+    def read(cls, device: BinaryIO):
         this = cls()
         this._read(device)
         this._decompress()
         this._valid()
         return this
 
-    def _read(self, device: BufferedReader) -> None:
+    def _read(self, device: BinaryIO) -> None:
         headerBytes = device.read(TPackerHeader.size)
         if len(headerBytes) != TPackerHeader.size:
             raise BufferError("Could not read archive header: not enough bytes")
@@ -55,7 +55,7 @@ class MdpArchive:
             self.archiveData = zlib.decompress(streamData, bufsize=self.archiveSize)
         else: # unknown
             assert False, f"Unknown streamType Code: {self.streamType}"
-        
+
         # Change streamType so we don't accidentally decompress twice
         self.streamType = 0
 
