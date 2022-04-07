@@ -4,7 +4,7 @@ import xml.etree.ElementTree as ET
 
 from PyQt5.QtGui import QColor
 
-from .mdp_layer import MdpLayer
+from ..layer import MdpLayer
 
 class MdpMdi:
     el: ET.Element

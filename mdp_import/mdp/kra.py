@@ -34,6 +34,7 @@ def setQImageToKritaNode(node: KritaNode, img: QImage, x: int, y: int) -> None:
     # This is auto-converted to a QByteArray somewhere down the line
     node.setPixelData(imgBytes, x, y, w, h)
 
+
 def pyz_path_insert(pyz_file: str, path: Optional[str] = None) -> None:
     import os, sys
 

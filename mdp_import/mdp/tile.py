@@ -3,14 +3,13 @@ import struct
 import zlib
 
 
-MdpTileHeader = struct.Struct("<IIII")
-
-
 class MdpTile:
     col: str
     row: int
     ctype: Optional[int]
     data: bytes
+
+    _HeaderStruct = struct.Struct("<IIII")
 
     def __init__(self) -> None:
         return
@@ -23,11 +22,12 @@ class MdpTile:
         return this
 
     def _read(self, device: BinaryIO) -> None:
-        headerBytes = device.read(MdpTileHeader.size)
-        if len(headerBytes) != MdpTileHeader.size:
+        cls = self.__class__
+        headerBytes = device.read(cls._HeaderStruct.size)
+        if len(headerBytes) != cls._HeaderStruct.size:
             raise BufferError("Could not read tile header: not enough bytes")
 
-        header = MdpTileHeader.unpack(headerBytes)
+        header = cls._HeaderStruct.unpack(headerBytes)
         (self.col, self.row, self.ctype, size) = header
 
         cdata = device.read(size)

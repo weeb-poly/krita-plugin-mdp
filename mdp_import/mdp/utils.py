@@ -5,8 +5,8 @@ from krita import Node as KritaNode
 from PyQt5.QtCore import QSize
 from PyQt5.QtGui import QImage, QColor, QPainter
 
-from .mdp_tile import MdpTile
-from .krita_utils import setQImageToKritaNode
+from .tile import MdpTile
+from .kra import setQImageToKritaNode
 
 
 def QColorFromArgbStr(c: str) -> QColor:

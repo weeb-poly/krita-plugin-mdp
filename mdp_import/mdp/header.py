@@ -1,16 +1,18 @@
 import struct
 from typing import BinaryIO
 
+
 MDIPACK_SIG = b"mdipack"
 MDIPACK_VER = 0
 
-TMDIPack = struct.Struct("<7sxLLL")
 
 class MdpHeader:
     signature: bytes
     version: int
     mdiSize: int
     mdibinSize: int
+
+    _TMDIPack = struct.Struct("<7sxLLL")
 
     def __init__(self) -> None:
         return
@@ -22,11 +24,12 @@ class MdpHeader:
         return this
 
     def _read(self, device: BinaryIO) -> None:
-        headerBytes = device.read(TMDIPack.size)
-        if len(headerBytes) != TMDIPack.size:
+        cls = self.__class__
+        headerBytes = device.read(cls._TMDIPack.size)
+        if len(headerBytes) != cls._TMDIPack.size:
             raise BufferError("Could not read header: not enough bytes")
 
-        header = TMDIPack.unpack(headerBytes)
+        header = cls._TMDIPack.unpack(headerBytes)
         (self.signature, self.version, self.mdiSize, self.mdibinSize) = header
 
         return self._valid()

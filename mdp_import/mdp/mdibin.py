@@ -2,7 +2,7 @@ import io
 import logging
 from typing import BinaryIO, Dict
 
-from .mdp_archive import MdpArchive
+from .archive import MdpArchive
 
 class MdpMdiBin:
     @staticmethod

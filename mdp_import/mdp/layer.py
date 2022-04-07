@@ -6,9 +6,10 @@ from distutils.util import strtobool
 
 from krita import Node as KritaNode
 
-from .mdp_archive import MdpArchive
-from .mdp_tile import MdpTile
-from .mdp_utils import fillNodeWithTiles
+from .archive import MdpArchive
+from .tile import MdpTile
+from .utils import fillNodeWithTiles
+
 
 class MdpLayer:
     tileDim: int

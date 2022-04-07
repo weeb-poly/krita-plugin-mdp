@@ -3,10 +3,10 @@ from typing import BinaryIO, Dict
 
 from krita import Krita, Document
 
-from .mdp_header import MdpHeader
-from .mdp_mdi import MdpMdi
-from .mdp_mdibin import MdpMdiBin
-from .mdp_archive import MdpArchive
+from .header import MdpHeader
+from .mdi import MdpMdi
+from .mdibin import MdpMdiBin
+from .archive import MdpArchive
 
 class MdpLoader:
     m_doc: Document
