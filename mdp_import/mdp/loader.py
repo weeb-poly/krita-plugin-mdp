@@ -1,5 +1,5 @@
 import logging
-from typing import BinaryIO, Dict, Tuple, Optional
+from typing import BinaryIO, Tuple
 
 from krita import Krita, Document
 
@@ -9,13 +9,12 @@ from .mdibin import MdpMdiBin
 from .archive import MdpArchive
 
 class MdpLoader:
-    krita: Optional[Krita]
+    krita: Krita
 
-    def __init__(self, krita = None) -> None:
-        self.krita = None
-
-    def buildDoc(self, io: BinaryIO, krita: Krita) -> Document:
+    def __init__(self, krita: Krita) -> None:
         self.krita = krita
+
+    def buildDoc(self, io: BinaryIO) -> Document:
         mdp_mdi, mdp_mdibin = self._read(io)
         m_doc = self._decode(mdp_mdi, mdp_mdibin)
         return m_doc
