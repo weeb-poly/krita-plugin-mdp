@@ -4,14 +4,14 @@ from typing import BinaryIO, Dict
 
 from .archive import MdpArchive
 
-class MdpMdiBin:
+class MdpMdiBin(dict, Dict[str, MdpArchive]):
     @staticmethod
-    def read(device: BinaryIO, mdibinSize: int) -> Dict[str, MdpArchive]:
+    def read(device: BinaryIO, mdibinSize: int) -> 'MdpMdiBin':
         mdiBinBytes = device.read(mdibinSize)
         if len(mdiBinBytes) != mdibinSize:
             raise BufferError("Could not read mdibin: not enough bytes")
 
-        mdiBin = {}
+        mdiBin = MdpMdiBin()
         bytesRead = 0
         with io.BytesIO(mdiBinBytes) as mdiBinIo:
             while bytesRead < mdibinSize:
