@@ -30,7 +30,7 @@ If you encounter an issue, feel free to reach out with the following:
 ## Notes
 
 mdiapp+ is developed by nattou.org and published by PGN Inc.
-FireAlpaca, and openCanvas are developed and published by PGN Inc.
+FireAlpaca is developed and published by PGN Inc.
 
 This package includes a zipped up copy of [`py_snappy`](https://github.com/ethereum/py-snappy) for decompression only. This module is bound by it's own [LICENSE](https://github.com/ethereum/py-snappy/blob/master/LICENSE).
 
