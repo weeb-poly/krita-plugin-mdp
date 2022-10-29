@@ -1,5 +1,5 @@
 import logging
-from typing import BinaryIO, Dict
+from typing import BinaryIO, Dict, Tuple, Optional
 
 from krita import Krita, Document
 
@@ -9,21 +9,18 @@ from .mdibin import MdpMdiBin
 from .archive import MdpArchive
 
 class MdpLoader:
-    m_doc: Document
-    mdp_mdi: MdpMdi
-    mdp_mdibin: Dict[str, MdpArchive]
+    krita: Optional[Krita]
 
-    def __init__(self) -> None:
-        self.m_doc = None
-        self.mdp_mdi = None
-        self.mdp_mdibin = None
+    def __init__(self, krita = None) -> None:
+        self.krita = None
 
     def buildDoc(self, io: BinaryIO, krita: Krita) -> Document:
-        self._read(io)
-        self._decode(krita)
-        return self.m_doc
+        self.krita = krita
+        mdp_mdi, mdp_mdibin = self._read(io)
+        m_doc = self._decode(mdp_mdi, mdp_mdibin)
+        return m_doc
 
-    def _read(self, io: BinaryIO) -> None:
+    def _read(self, io: BinaryIO) -> Tuple[MdpMdi, MdpMdiBin]:
         logging.debug('pos: %i', io.tell())
 
         try:
@@ -35,27 +32,29 @@ class MdpLoader:
         logging.debug("Read header. pos: %i", io.tell())
 
         try:
-            self.mdp_mdi = MdpMdi.read(io, header.mdiSize)
+            mdp_mdi = MdpMdi.read(io, header.mdiSize)
         except Exception:
             raise Exception("failed reading mdi xml")
 
-        logging.debug(self.mdp_mdi)
+        logging.debug(mdp_mdi)
         logging.debug("Read mdi xml. pos: %i", io.tell())
 
-        self.mdp_mdibin = MdpMdiBin.read(io, header.mdibinSize)
+        mdp_mdibin = MdpMdiBin.read(io, header.mdibinSize)
 
         logging.debug("Read mdibin section. pos: %i", io.tell())
+        
+        return (mdp_mdi, mdp_mdibin)
 
-    def _decode(self, krita: Krita) -> None:
-        doc_width = self.mdp_mdi.width()
-        doc_height = self.mdp_mdi.height()
+    def _decode(self, mdp_mdi: MdpMdi, mdp_mdibin: MdpMdiBin) -> Document:
+        doc_width = mdp_mdi.width()
+        doc_height = mdp_mdi.height()
 
-        doc_icc = self.mdp_mdi.icc()
+        doc_icc = mdp_mdi.icc()
 
         # NOTE: Assuming 1ppi = 1dpi
-        doc_ppi = self.mdp_mdi.dpi()
+        doc_ppi = mdp_mdi.dpi()
 
-        self.m_doc = krita.createDocument(
+        m_doc = self.krita.createDocument(
             doc_width,
             doc_height,
             "MDPACK IMPORTED FILE",
@@ -67,7 +66,7 @@ class MdpLoader:
 
         # Krita makes a default layer for us when creating
         # a new document. Let's keep track of it so we can delete it at the end
-        default_node = self.m_doc.topLevelNodes()
+        default_node = m_doc.topLevelNodes()
         if len(default_node) != 0:
             default_node = default_node[0]
 
@@ -75,19 +74,19 @@ class MdpLoader:
         # https://docs.krita.org/en/user_manual/introduction_from_other_software/introduction_from_sai.html#transparency
         # doc_bg = self.mdp_mdi.bgColor()
         # if doc_bg is not None:
-        #     self.m_doc.setBackgroundColor(doc_bg)
+        #     m_doc.setBackgroundColor(doc_bg)
 
-        layers = self.mdp_mdi.layers()
+        layers = mdp_mdi.layers()
 
         # We generate the Krita nodes based on the
         # xml data. We keep track of mdp layer id's so that
         # we can establish parent-child layer stuff in the
         # next step. The id of -1 is supposed to correspond to
         # the root.
-        root_node = self.m_doc.rootNode()
+        root_node = m_doc.rootNode()
         knodes = { "-1" : root_node }
         for l in layers:
-            knode = l.createKritaNode(self.m_doc)
+            knode = l.createKritaNode(m_doc)
             knodes[l.id] = knode
 
         # We link up all child nodes with the appropriate
@@ -101,18 +100,20 @@ class MdpLoader:
         # We immediately use these tiles to reconstruct
         # the image in the krita node
         for l in layers:
-            archive = self.mdp_mdibin[l.archiveName]
+            archive = mdp_mdibin[l.archiveName]
             l.decodeArchive(archive)
             if l.layerType in ("32bpp", "8bpp", "1bpp",):
                 l.setKritaPixels()
 
         # We set the active layer using the dictionary
         # that we made earlier
-        active_layer_id = self.mdp_mdi.activeLayerId()
+        active_layer_id = mdp_mdi.activeLayerId()
         active_krita_node = knodes.get(active_layer_id)
         if active_krita_node is not None:
-            self.m_doc.setActiveNode(active_krita_node)
+            m_doc.setActiveNode(active_krita_node)
 
         # Delete default layer that was created for us
         if default_node is not None:
             default_node.remove()
+        
+        return m_doc
