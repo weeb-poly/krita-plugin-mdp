@@ -19,11 +19,11 @@ class MdpExtension(Extension):
     def importDocuments(self) -> None:
         fileNames = QFileDialog.getOpenFileNames(filter="mdipack (*.mdp)")
 
-        loader = MdpLoader()
+        loader = MdpLoader(self.krita)
 
         for filename in fileNames:
             with open(fileName, "rb") as _file:
-                doc = loader.buildDoc(_file, self.krita)
+                doc = loader.buildDoc(_file)
 
             self.krita.activeWindow().addView(doc)
             doc.refreshProjection()
