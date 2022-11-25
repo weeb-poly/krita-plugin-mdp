@@ -9,7 +9,7 @@ PAC_RESERVED = 48
 
 TPackerHeader = struct.Struct(f"<4sLLLL{PAC_RESERVED}x{PAC_MAX_NAME}s")
 
-class MdpArchive:
+class CPackerArchive:
     signature: bytes
     chunkSize: int
     streamType: int

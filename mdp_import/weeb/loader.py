@@ -3,10 +3,9 @@ from typing import BinaryIO, Tuple
 
 from krita import Krita, Document
 
-from .header import MdpHeader
-from .mdi import MdpMdi
-from .mdibin import MdpMdiBin
-from .archive import MdpArchive
+from ..neet.CMangaFileMDP import CMangaFileMDP
+
+from .CKritaLayer import CKritaLayer
 
 class MdpLoader:
     krita: Krita
@@ -15,36 +14,22 @@ class MdpLoader:
         self.krita = krita
 
     def buildDoc(self, io: BinaryIO) -> Document:
-        mdp_mdi, mdp_mdibin = self._read(io)
-        m_doc = self._decode(mdp_mdi, mdp_mdibin)
+        mdp = self._read(io)
+        m_doc = self._decode(mdp)
         return m_doc
 
-    def _read(self, io: BinaryIO) -> Tuple[MdpMdi, MdpMdiBin]:
-        logging.debug('pos: %i', io.tell())
-
+    def _read(self, io: BinaryIO) -> CMangaFileMDP:
         try:
-            header = MdpHeader.read(io)
+            mdp = CMangaFileMDP.read(io)
         except Exception:
-            raise Exception("failed reading header")
+            raise Exception("failed reading mdp")
 
-        logging.debug(header)
-        logging.debug("Read header. pos: %i", io.tell())
+        return mdp
 
-        try:
-            mdp_mdi = MdpMdi.read(io, header.mdiSize)
-        except Exception:
-            raise Exception("failed reading mdi xml")
+    def _decode(self, mdp: CMangaFileMDP) -> Document:
+        mdp_mdi = mdp.mdi
+        mdp_mdibin = mdp.mdb
 
-        logging.debug(mdp_mdi)
-        logging.debug("Read mdi xml. pos: %i", io.tell())
-
-        mdp_mdibin = MdpMdiBin.read(io, header.mdibinSize)
-
-        logging.debug("Read mdibin section. pos: %i", io.tell())
-        
-        return (mdp_mdi, mdp_mdibin)
-
-    def _decode(self, mdp_mdi: MdpMdi, mdp_mdibin: MdpMdiBin) -> Document:
         doc_width = mdp_mdi.width()
         doc_height = mdp_mdi.height()
 
@@ -65,9 +50,10 @@ class MdpLoader:
 
         # Krita makes a default layer for us when creating
         # a new document. Let's keep track of it so we can delete it at the end
-        default_node = m_doc.topLevelNodes()
-        if len(default_node) != 0:
-            default_node = default_node[0]
+        default_node = None
+        default_nodes = m_doc.topLevelNodes()
+        if len(default_nodes) != 0:
+            default_node = default_nodes[0]
 
         # TODO: Figure out how to handle checkerBG and bgColor
         # https://docs.krita.org/en/user_manual/introduction_from_other_software/introduction_from_sai.html#transparency
@@ -76,6 +62,12 @@ class MdpLoader:
         #     m_doc.setBackgroundColor(doc_bg)
 
         layers = mdp_mdi.layers()
+
+        # This should be fun(tm)
+        # Changing CMangaLayer classes to CKritaLayer
+        # Allows us to keep Krita code separate
+        for l in layers:
+            l.__class__ = CKritaLayer
 
         # We generate the Krita nodes based on the
         # xml data. We keep track of mdp layer id's so that

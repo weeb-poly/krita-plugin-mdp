@@ -2,7 +2,7 @@ from krita import Krita, Extension, Window
 
 from PyQt5.QtWidgets import QFileDialog
 
-from ..mdp.loader import MdpLoader
+from ..weeb.loader import MdpLoader
 
 class MdpExtension(Extension):
     # Reduce calls to Krita.instance() and self.parent()

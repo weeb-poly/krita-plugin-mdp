@@ -2,21 +2,21 @@ import io
 import logging
 from typing import BinaryIO, Dict
 
-from .archive import MdpArchive
+from .CPackerArchive import CPackerArchive
 
-class MdpMdiBin(dict, Dict[str, MdpArchive]):
+class CMangaFileMDB(dict, Dict[str, CPackerArchive]):
     @staticmethod
-    def read(device: BinaryIO, mdibinSize: int) -> 'MdpMdiBin':
+    def read(device: BinaryIO, mdibinSize: int) -> 'CMangaFileMDB':
         mdiBinBytes = device.read(mdibinSize)
         if len(mdiBinBytes) != mdibinSize:
             raise BufferError("Could not read mdibin: not enough bytes")
 
-        mdiBin = MdpMdiBin()
+        mdiBin = CMangaFileMDB()
         bytesRead = 0
         with io.BytesIO(mdiBinBytes) as mdiBinIo:
             while bytesRead < mdibinSize:
                 try:
-                    archive = MdpArchive.read(mdiBinIo)
+                    archive = CPackerArchive.read(mdiBinIo)
                     mdiBin[archive.archiveName] = archive
                     bytesRead += archive.chunkSize
                 except Exception as e:

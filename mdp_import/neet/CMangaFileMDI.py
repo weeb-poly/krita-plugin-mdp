@@ -1,12 +1,15 @@
-from typing import BinaryIO, List, Optional
+from typing import BinaryIO, List, Optional, Tuple
 from distutils.util import strtobool
 import xml.etree.ElementTree as ET
 
-from PyQt5.QtGui import QColor
+# try:
+#     from PySide6.QtGui import QColor
+# except ImportError:
+#     from PyQt5.QtGui import QColor
 
-from ..layer import MdpLayer
+from .CMangaLayer import CMangaLayer
 
-class MdpMdi:
+class CMangaFileMDI:
     el: ET.Element
 
     @classmethod
@@ -41,30 +44,36 @@ class MdpMdi:
 
         return doc_icc
 
-    def bgColor(self) -> Optional[QColor]:
-        doc_bg = (
-            self.el.get('bgColorR'),
-            self.el.get('bgColorG'),
-            self.el.get('bgColorB'),
-        )
+    # def bgColor(self) -> Optional[QColor]:
+    #     doc_bg = (
+    #         self.el.get('bgColorR'),
+    #         self.el.get('bgColorG'),
+    #         self.el.get('bgColorB'),
+    #     )
 
-        if None in doc_bg:
-            return None
+    #     if None in doc_bg:
+    #         return None
         
-        return QColor(int(doc_bg[0]), int(doc_bg[1]), int(doc_bg[2]))
+    #     bg_color = QColor(
+    #         int(doc_bg[0]),
+    #         int(doc_bg[1]),
+    #         int(doc_bg[2])
+    #     )
+
+    #     return bg_color
 
     def activeLayerId(self) -> Optional[str]:
         layersEl = self.el.find('./Layers')
         return layersEl.attrib.get('active')
 
-    def layers(self) -> List[MdpLayer]:
+    def layers(self) -> List[CMangaLayer]:
         # This layer ordering seems to match up with how
         # Krita does things (lowest layer first),
         # so I'm just going to leave it as is.
 
         layers = []
         for layerEl in self.el.iterfind('./Layers/Layer'):
-            l = MdpLayer(layerEl)
+            l = CMangaLayer(layerEl)
             layers.append(l)
 
         return layers

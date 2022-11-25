@@ -2,8 +2,17 @@ from typing import BinaryIO, Optional
 import struct
 import zlib
 
+try:
+    import py_snappy as snappy
+except ImportError:
+    pass
 
-class MdpTile:
+try:
+    import py_fastlz as fastlz
+except ImportError:
+    pass
+
+class CImageTile:
     col: str
     row: int
     ctype: Optional[int]
@@ -52,16 +61,16 @@ class MdpTile:
             except Exception as e:
                 raise Exception("Could not decompress tile: zlib error") from e
         elif self.ctype == 1: # snappy
-            # try:
-            #     self.data = snappy.decompress(cdata)
-            # except Exception as e:
-            #     raise Exception("Could not decompress tile: py_snappy error") from e
+            try:
+                self.data = snappy.decompress(cdata)
+            except Exception as e:
+                raise Exception("Could not decompress tile: py_snappy error") from e
             raise Exception("Could not decompress tile: snappy not supported")
         elif self.ctype == 2: # FastLZ
-            # try:
-            #     self.data = fastlz.decompress(cdata)
-            # except Exception as e:
-            #     raise Exception("Could not decompress tile: py_fastlz error") from e
+            try:
+                self.data = fastlz.decompress(cdata)
+            except Exception as e:
+                raise Exception("Could not decompress tile: py_fastlz error") from e
             raise Exception("Could not decompress tile: FastLZ not supported")
         else:
             # Unknown Compression Type

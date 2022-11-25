@@ -6,7 +6,7 @@ MDIPACK_SIG = b"mdipack"
 MDIPACK_VER = 0
 
 
-class MdpHeader:
+class TMDIPack:
     signature: bytes
     version: int
     mdiSize: int
