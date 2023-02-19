@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "krita-plugin-mdp"
+version = "0.0.1"
+description = "MDIPACK Import Plugin for Krita"
+authors = ["Timothy Cyrus <tcyrus@tcyr.us>"]
+license = "ISC"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+
+[tool.poetry.dev-dependencies]
+pywinauto = {version = "^0.6.8", markers = "sys_platform == 'win32'"}
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
