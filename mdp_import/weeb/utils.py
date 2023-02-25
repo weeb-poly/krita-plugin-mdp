@@ -66,7 +66,7 @@ def fillNodeWithTiles(
 
 
 def decodeTileImage(
-    tile: MdpTile,
+    tile: CImageTile,
     layerType: str,
     tileDim: int,
     layerColor: Optional[QColor] = None

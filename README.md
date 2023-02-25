@@ -40,4 +40,4 @@ I would like to thank Um6ra1 for his notes on the file format and Bowserinator f
 
 I would like to thank 42aruaour for directing me to the nattou.org group, who created the spec as well as most of applications that use it.
 
-Finally, I would like to thank rsuzaki for sharing a lot of information on the MDIPACK file format ([link](https://github.com/rsuzaki/mdp_format)). This information was extremely helpful in order to get this plugin to the state that it is.
+Finally, I would like to thank rsuzaki for sharing a lot of information on the MDIPACK file format ([link](https://github.com/rsuzaki/mdp_format/wiki)). This information was extremely helpful in order to get this plugin to the state that it is.

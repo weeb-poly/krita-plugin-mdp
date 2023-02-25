@@ -12,6 +12,7 @@ try:
 except ImportError:
     pass
 
+
 class CImageTile:
     col: str
     row: int

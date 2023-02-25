@@ -21,7 +21,7 @@ class MdpExtension(Extension):
 
         loader = MdpLoader(self.krita)
 
-        for filename in fileNames:
+        for fileName in fileNames:
             with open(fileName, "rb") as _file:
                 doc = loader.buildDoc(_file)
 

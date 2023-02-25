@@ -1,4 +1,3 @@
-import logging
 from typing import BinaryIO, Tuple
 
 from krita import Krita, Document

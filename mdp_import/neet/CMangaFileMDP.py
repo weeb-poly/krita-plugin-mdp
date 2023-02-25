@@ -1,4 +1,4 @@
-import struct
+import logging
 from typing import BinaryIO
 
 from .CMangaFileMDB import CMangaFileMDB
@@ -21,22 +21,22 @@ class CMangaFileMDP:
         return this
 
     def _read(self, device: BinaryIO) -> None:
-        logging.debug('pos: %i', io.tell())
+        logging.debug('pos: %i', device.tell())
 
         try:
-            self.header = TMDIPack.read(io)
+            self.header = TMDIPack.read(device)
         except Exception:
             raise Exception("failed reading header")
 
-        logging.debug("Read header. pos: %i", io.tell())
+        logging.debug("Read header. pos: %i", device.tell())
 
         try:
-            self.mdi = CMangaFileMDI.read(io, self.header.mdiSize)
+            self.mdi = CMangaFileMDI.read(device, self.header.mdiSize)
         except Exception:
             raise Exception("failed reading mdi xml")
 
-        logging.debug("Read mdi xml. pos: %i", io.tell())
+        logging.debug("Read mdi xml. pos: %i", device.tell())
 
-        self.mdb = CMangaFileMDB.read(io, self.header.mdibinSize)
+        self.mdb = CMangaFileMDB.read(device, self.header.mdibinSize)
 
-        logging.debug("Read mdibin section. pos: %i", io.tell())
+        logging.debug("Read mdibin section. pos: %i", device.tell())

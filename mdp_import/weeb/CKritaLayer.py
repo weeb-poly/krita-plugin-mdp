@@ -1,6 +1,11 @@
+from distutils.util import strtobool
+
+from krita import Node as KritaNode
+
 from .utils import fillNodeWithTiles
 
 from ..neet import CMangaLayer
+
 
 class CKritaLayer(CMangaLayer):
     kritaNode: KritaNode

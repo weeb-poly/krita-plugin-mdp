@@ -1,4 +1,4 @@
-from typing import BinaryIO, List, Optional, Tuple
+from typing import BinaryIO, List, Optional
 from distutils.util import strtobool
 import xml.etree.ElementTree as ET
 

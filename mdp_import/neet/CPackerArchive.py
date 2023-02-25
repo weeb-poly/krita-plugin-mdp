@@ -14,7 +14,7 @@ class CPackerArchive:
     chunkSize: int
     streamType: int
     streamSize: int
-    archiveSize: str
+    archiveSize: int
     archiveName: str
 
     archiveData: bytes
